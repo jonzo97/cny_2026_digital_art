@@ -7,9 +7,7 @@
 
   // ---- Constants ----
   var MAX_TRAIL = 4000;
-  var HORSE_EPICYCLES = 80;
   var FU_EPICYCLES = 200;
-  var PAUSE_AFTER_HORSE = 2000;
   var PAUSE_AFTER_FU = 3000;
   var FADE_DURATION = 800;
   var DEFAULT_SPEED = 1;
@@ -27,8 +25,7 @@
   var animId = null;
   var running = false;
 
-  // DFT data
-  var horseDFT = null;
+  // DFT data (福 only)
   var fuDFT = null;
   var currentDFT = null;
   var visibleCount = 0;
@@ -38,7 +35,7 @@
   var time = 0;
   var speed = DEFAULT_SPEED;
   var trail = [];
-  var phase = 'draw-horse'; // draw-horse, pause-horse, fade-to-fu, draw-fu, pause-fu, fade-to-horse
+  var phase = 'draw-fu'; // draw-fu, pause-fu, fade-restart
   var phaseStart = 0;
   var paused = false;
 
@@ -263,21 +260,16 @@
 
   // ---- Prepare DFT Data ----
   function prepareData() {
-    // Horse from SVG path
-    var horsePoints = parseSVGPath(HORSE_SVG_PATH, 600);
-    var scaledHorse = normalizePoints(horsePoints, width * 0.55, height * 0.65);
-    horseDFT = computeComplexDFT(scaledHorse);
-
     // 福 from pre-extracted SVG path (Noto Serif SC Bold)
     var fuPoints = parseSVGPath(FU_SVG_PATH, 800);
     var scaledFu = normalizePoints(fuPoints, width * 0.5, height * 0.6);
     fuDFT = computeComplexDFT(scaledFu);
 
-    // Start with horse
-    currentDFT = horseDFT;
-    maxCount = Math.min(HORSE_EPICYCLES, horseDFT.length);
+    // Start with 福
+    currentDFT = fuDFT;
+    maxCount = Math.min(FU_EPICYCLES, fuDFT.length);
     visibleCount = maxCount;
-    phase = 'draw-horse';
+    phase = 'draw-fu';
   }
 
   // ---- Epicycle Evaluation ----
@@ -412,63 +404,29 @@
     ctx.textAlign = 'right';
     ctx.textBaseline = 'top';
     ctx.fillText('N = ' + visibleCount + ' circles', width - 15 * dpr, 15 * dpr);
-
-    var label = '';
-    if (phase === 'draw-horse' || phase === 'pause-horse' || phase === 'fade-to-fu') {
-      label = 'HORSE';
-    } else {
-      label = '\u798F';
-    }
-    ctx.fillText(label, width - 15 * dpr, 15 * dpr + fSize + 4);
+    ctx.fillText('\u798F', width - 15 * dpr, 15 * dpr + fSize + 4);
     ctx.restore();
   }
 
-  // ---- Phase Management ----
+  // ---- Phase Management (福 only, loops) ----
   function updatePhase(now) {
     var elapsed = now - phaseStart;
 
-    if (phase === 'draw-horse') {
-      // Drawing until full loop (time >= 1)
-      if (time >= 1.0) {
-        phase = 'pause-horse';
-        phaseStart = now;
-      }
-    } else if (phase === 'pause-horse') {
-      if (elapsed >= PAUSE_AFTER_HORSE) {
-        phase = 'fade-to-fu';
-        phaseStart = now;
-      }
-    } else if (phase === 'fade-to-fu') {
-      if (elapsed >= FADE_DURATION) {
-        // Switch to fu
-        if (fuDFT) {
-          currentDFT = fuDFT;
-          maxCount = Math.min(FU_EPICYCLES, fuDFT.length);
-          visibleCount = maxCount;
-        }
-        trail = [];
-        time = 0;
-        phase = 'draw-fu';
-        phaseStart = now;
-      }
-    } else if (phase === 'draw-fu') {
+    if (phase === 'draw-fu') {
       if (time >= 1.0) {
         phase = 'pause-fu';
         phaseStart = now;
       }
     } else if (phase === 'pause-fu') {
       if (elapsed >= PAUSE_AFTER_FU) {
-        phase = 'fade-to-horse';
+        phase = 'fade-restart';
         phaseStart = now;
       }
-    } else if (phase === 'fade-to-horse') {
+    } else if (phase === 'fade-restart') {
       if (elapsed >= FADE_DURATION) {
-        currentDFT = horseDFT;
-        maxCount = Math.min(HORSE_EPICYCLES, horseDFT.length);
-        visibleCount = maxCount;
         trail = [];
         time = 0;
-        phase = 'draw-horse';
+        phase = 'draw-fu';
         phaseStart = now;
       }
     }
@@ -504,14 +462,14 @@
 
     // Compute fade alpha for transitions
     var fadeAlpha = 1;
-    if (phase === 'fade-to-fu' || phase === 'fade-to-horse') {
+    if (phase === 'fade-restart') {
       fadeAlpha = 1 - (now - phaseStart) / FADE_DURATION;
       if (fadeAlpha < 0) fadeAlpha = 0;
     }
 
-    // Advance time during draw phases
+    // Advance time during draw phase
     // time goes 0→1 for a full trace; ~15 seconds at default speed
-    var isDrawing = (phase === 'draw-horse' || phase === 'draw-fu');
+    var isDrawing = (phase === 'draw-fu');
     var traceSeconds = 15;
     var frameDt = speed / (60 * traceSeconds);
     // Sub-step: add multiple trail points per frame for smooth curves
@@ -592,7 +550,7 @@
     var num = parseInt(e.key, 10);
     if (num >= 1 && num <= 9 && currentDFT) {
       var maxN = currentDFT.length;
-      visibleCount = Math.max(1, Math.round((num / 9) * Math.min(maxN, phase.indexOf('horse') !== -1 ? HORSE_EPICYCLES : FU_EPICYCLES)));
+      visibleCount = Math.max(1, Math.round((num / 9) * Math.min(maxN, FU_EPICYCLES)));
     }
   }
 
@@ -663,7 +621,6 @@
     document.removeEventListener('keydown', onKeyDown);
     window.removeEventListener('resize', onResize);
     trail = [];
-    horseDFT = null;
     fuDFT = null;
     currentDFT = null;
   }

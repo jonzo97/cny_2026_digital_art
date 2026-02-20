@@ -16,8 +16,8 @@
     { name: 'red', colors: ['#FF4444', '#CC0000', '#FF4444'] }
   ];
 
-  var PARALLAX_DEPTHS = [0, 5, 12, 20, 30, 40];
-  var ROTATION_DEPTHS = [0, 0.3, 0.6, 1.0, 1.5, 2.0];
+  var PARALLAX_DEPTHS = [0, 8, 18, 30, 45, 60];
+  var ROTATION_DEPTHS = [0, 0.5, 1.0, 1.8, 2.5, 3.5];
 
   var section, svgEl, canvas, ctx;
   var mouse;
@@ -734,9 +734,9 @@
       var targetY = normY * PARALLAX_DEPTHS[i];
       var targetRot = normX * ROTATION_DEPTHS[i];
 
-      currentParallax[i].x = lerp(currentParallax[i].x, targetX, 0.05);
-      currentParallax[i].y = lerp(currentParallax[i].y, targetY, 0.05);
-      currentRotation[i] = lerp(currentRotation[i], targetRot, 0.05);
+      currentParallax[i].x = lerp(currentParallax[i].x, targetX, 0.08);
+      currentParallax[i].y = lerp(currentParallax[i].y, targetY, 0.08);
+      currentRotation[i] = lerp(currentRotation[i], targetRot, 0.08);
 
       var px = currentParallax[i].x;
       var py = currentParallax[i].y;
@@ -812,7 +812,7 @@
     canvas.height = H;
     ctx = canvas.getContext('2d');
 
-    mouse = new SmoothMouse(0.05);
+    mouse = new SmoothMouse(0.1);
     mouse.update(W / 2, H / 2);
 
     // Build and insert SVG

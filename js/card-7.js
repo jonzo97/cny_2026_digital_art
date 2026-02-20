@@ -17,6 +17,8 @@
   var STEPS_PER_FRAME = 10;
   var DROP_RADIUS = 10;
   var GLOW_PULSE_SPEED = 2.0;
+  var PERTURB_INTERVAL = 180;  // frames between perturbations
+  var PARAM_DRIFT_SPEED = 0.0002; // how fast f/k drift over time
 
   // ---- State ----
 
@@ -44,6 +46,7 @@
 
   // Glow timer
   var glowTime = 0;
+  var frameCount = 0;
 
   // ---- Horse Mask Generation ----
 
@@ -372,12 +375,47 @@
     }
   }
 
+  // ---- Periodic Perturbation ----
+
+  function perturbGrid() {
+    // Add random seed clusters to keep the pattern evolving
+    var count = 3 + Math.floor(Math.random() * 5);
+    for (var s = 0; s < count; s++) {
+      var sx = Math.floor(Math.random() * GRID_W);
+      var sy = Math.floor(Math.random() * GRID_H);
+      var r = 3 + Math.floor(Math.random() * 8);
+      for (var dy = -r; dy <= r; dy++) {
+        for (var dx = -r; dx <= r; dx++) {
+          if (dx * dx + dy * dy > r * r) continue;
+          var nx = sx + dx;
+          var ny = sy + dy;
+          if (nx >= 0 && nx < GRID_W && ny >= 0 && ny < GRID_H) {
+            var idx = ny * GRID_W + nx;
+            gridB[idx] = Math.min(1.0, gridB[idx] + 0.5 + Math.random() * 0.5);
+          }
+        }
+      }
+    }
+  }
+
   // ---- Main Loop ----
 
   function frame(timestamp) {
     if (!running) return;
 
     glowTime = timestamp * 0.001;
+    frameCount++;
+
+    // Slowly drift parameters for visual variety
+    if (!paramExplore) {
+      currentF = DEFAULT_F + Math.sin(glowTime * PARAM_DRIFT_SPEED * 100) * 0.003;
+      currentK = DEFAULT_K + Math.cos(glowTime * PARAM_DRIFT_SPEED * 70) * 0.002;
+    }
+
+    // Periodic perturbation to prevent steady state
+    if (frameCount % PERTURB_INTERVAL === 0) {
+      perturbGrid();
+    }
 
     simulate();
     render();

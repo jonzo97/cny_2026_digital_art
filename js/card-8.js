@@ -10,8 +10,8 @@
   var RHO = 28;
   var BETA = 8 / 3;
   var DT = 0.005;
-  var TOTAL_POINTS = 120000;
-  var POINTS_PER_FRAME = 500;
+  var TOTAL_POINTS = 60000;
+  var POINTS_PER_FRAME = 400;
   var STAR_COUNT = 200;
   var FOCAL_LENGTH = 400;
   var CAMERA_Z = 80;
@@ -318,21 +318,22 @@
 
     ctx.save();
     ctx.translate(width / 2, height / 2);
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // Draw segments in batches for performance
-    var batchSize = 200;
+    // Draw segments in larger batches for performance (no shadow blur)
+    var batchSize = 500;
     for (var batch = 0; batch < endIdx; batch += batchSize) {
       var bEnd = Math.min(batch + batchSize, endIdx);
       if (bEnd - batch < 2) continue;
 
-      // Compute age-based opacity: newer points are more opaque
       var ageFrac = batch / endIdx;
       var baseAlpha;
       if (phase === 'fading') {
-        baseAlpha = fadeAlpha * (0.2 + 0.8 * ageFrac);
+        baseAlpha = fadeAlpha * (0.3 + 0.7 * ageFrac);
       } else {
-        baseAlpha = 0.2 + 0.8 * ageFrac;
+        baseAlpha = 0.3 + 0.7 * ageFrac;
       }
 
       ctx.beginPath();
@@ -354,33 +355,34 @@
         }
       }
 
-      // Color based on midpoint z
       var midIdx = Math.floor((batch + bEnd) / 2);
       var midZ = pointsZ[midIdx];
       var color = getColor(midZ, zMin, zMax);
 
       ctx.strokeStyle = color;
       ctx.globalAlpha = Math.max(0, Math.min(1, baseAlpha));
-      ctx.shadowColor = getGlowColor(midZ, zMin, zMax);
-      ctx.shadowBlur = 4;
       ctx.stroke();
     }
 
     ctx.restore();
     ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
   }
 
-  // ---- Draw bloom overlay ----
+  // ---- Draw parameter controls overlay ----
 
-  function drawBloom() {
+  function drawControls() {
     ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    ctx.filter = 'blur(8px)';
-    ctx.globalAlpha = 0.15;
-    ctx.drawImage(canvas, 0, 0, width, height);
+    ctx.font = '11px "Source Code Pro", monospace';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    var y = 14;
+    ctx.fillText('Scroll: zoom | Drag: rotate | Click: randomize', width - 14, y);
+    y += 16;
+    ctx.fillText('L: switch attractor | Zoom: ' + zoom.toFixed(2) + 'x', width - 14, y);
+    y += 16;
+    ctx.fillText('Speed: ' + (ROTATION_SPEED * 1000).toFixed(0) + ' | dt=' + DT.toFixed(4), width - 14, y);
     ctx.restore();
-    ctx.filter = 'none';
   }
 
   // ---- Animation Frame ----
@@ -429,11 +431,9 @@
     // Draw attractor
     drawAttractor(frameTime);
 
-    // Bloom effect
-    drawBloom();
-
-    // Draw label
+    // Draw label and controls
     drawLabel();
+    drawControls();
   }
 
   // ---- Event Handlers ----

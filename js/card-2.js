@@ -9,8 +9,8 @@
   var GRID_COLS = 50;
   var GRID_ROWS = 50;
   var PARTICLE_COUNT = 18000;
-  var MOUSE_RADIUS = 150;
-  var MOUSE_FORCE = 4;
+  var MOUSE_RADIUS = 200;
+  var MOUSE_FORCE = 8;
   var RAMP_UP_MS = 8000;
   var HOLD_MS = 5000;
   var RAMP_DOWN_MS = 8000;
@@ -23,7 +23,7 @@
   var CONVERGE_STRENGTH = 0.15;
   var VIGNETTE_INNER = 0.4;
   var SHIMMER_AMP = 0.15;
-  var MOUSE_FADE_MS = 1000;
+  var MOUSE_FADE_MS = 3000;
   var BORDER_BLEND_PX = 20;
 
   // Colors (r,g,b)
@@ -256,6 +256,10 @@
     }
   }
 
+  function onMouseLeave() {
+    mouseActive = false;
+  }
+
   function onTouchEnd() {
     mouseActive = false;
   }
@@ -369,8 +373,8 @@
       }
 
       // Damped velocity
-      pvx[i] = pvx[i] * 0.85 + fvx * 0.15;
-      pvy[i] = pvy[i] * 0.85 + fvy * 0.15;
+      pvx[i] = pvx[i] * 0.7 + fvx * 0.3;
+      pvy[i] = pvy[i] * 0.7 + fvy * 0.3;
       px[i] += pvx[i];
       py[i] += pvy[i];
 
@@ -461,6 +465,7 @@
     running = true;
 
     canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
     canvas.addEventListener('touchmove', onTouchMove, { passive: true });
     canvas.addEventListener('touchend', onTouchEnd);
     window.addEventListener('resize', resize);
@@ -491,6 +496,7 @@
     pause();
     if (canvas) {
       canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
       canvas.removeEventListener('touchmove', onTouchMove);
       canvas.removeEventListener('touchend', onTouchEnd);
     }
