@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy New Year 2026 — Year of the Horse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Intro Card -->
+  <div id="intro" class="intro-overlay">
+    <div class="intro-content">
+      <h1 class="intro-title">新年快乐</h1>
+      <p class="intro-subtitle">Happy New Year 2026</p>
+      <p class="intro-year">Year of the Horse</p>
+      <p class="intro-hint">&#8592; scroll &#8594;</p>
+    </div>
+  </div>
+
+  <!-- Card Title Overlay -->
+  <div id="card-title" class="card-title"></div>
+
+  <!-- Dot Navigation -->
+  <nav id="dot-nav" class="dot-nav">
+    <button class="dot active" data-index="0" aria-label="Go to card 1"></button>
+    <button class="dot" data-index="1" aria-label="Go to card 2"></button>
+    <button class="dot" data-index="2" aria-label="Go to card 3"></button>
+    <button class="dot" data-index="3" aria-label="Go to card 4"></button>
+    <button class="dot" data-index="4" aria-label="Go to card 5"></button>
+    <button class="dot" data-index="5" aria-label="Go to card 6"></button>
+    <button class="dot" data-index="6" aria-label="Go to card 7"></button>
+    <button class="dot" data-index="7" aria-label="Go to card 8"></button>
+  </nav>
+
+  <!-- Scroll Container -->
+  <div id="scroll-container" class="scroll-container">
+
+    <section class="card-section" data-card="1" data-title="Fourier Epicycles">
+      <div class="info-icon" data-description="Rotating circles trace a horse and 福 character through Fourier decomposition — every curve is a sum of circles.">&#9432;</div>
+      <canvas id="canvas-1"></canvas>
+    </section>
+
+    <section class="card-section" data-card="2" data-title="Flow Field">
+      <div class="info-icon" data-description="Particles follow a noise field that slowly warps to reveal a hidden horse. Move your mouse to disrupt the flow.">&#9432;</div>
+      <canvas id="canvas-2"></canvas>
+    </section>
+
+    <section class="card-section" data-card="3" data-title="Particle Glitch">
+      <div class="info-icon" data-description="新年快乐 built from thousands of particles. Move to scatter, click to glitch.">&#9432;</div>
+      <canvas id="canvas-3"></canvas>
+    </section>
+
+    <section class="card-section" data-card="4" data-title="水墨 Ink Wash">
+      <div class="info-icon" data-description="A horse painted stroke by stroke in procedural ink wash. Click to splatter.">&#9432;</div>
+      <canvas id="canvas-4"></canvas>
+    </section>
+
+    <section class="card-section" data-card="5" data-title="剪纸 Paper Cut">
+      <div class="info-icon" data-description="Traditional paper cutting art with layered parallax depth. Move to explore.">&#9432;</div>
+      <canvas id="canvas-5"></canvas>
+    </section>
+
+    <section class="card-section" data-card="6" data-title="Fireworks">
+      <div class="info-icon" data-description="Click to launch fireworks over the city. Hold for a roman candle.">&#9432;</div>
+      <canvas id="canvas-6"></canvas>
+    </section>
+
+    <section class="card-section" data-card="7" data-title="Morphogenesis">
+      <div class="info-icon" data-description="Gray-Scott reaction-diffusion simulation seeded in the shape of a horse. Click to add chemical.">&#9432;</div>
+      <canvas id="canvas-7"></canvas>
+    </section>
+
+    <section class="card-section" data-card="8" data-title="Strange Attractor">
+      <div class="info-icon" data-description="The Lorenz attractor traced as a golden thread in space. Drag to rotate.">&#9432;</div>
+      <canvas id="canvas-8"></canvas>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/card-1.js"></script>
+  <script src="js/card-2.js"></script>
+  <script src="js/card-3.js"></script>
+  <script src="js/card-4.js"></script>
+  <script src="js/card-5.js"></script>
+  <script src="js/card-6.js"></script>
+  <script src="js/card-7.js"></script>
+  <script src="js/card-8.js"></script>
+</body>
+</html>

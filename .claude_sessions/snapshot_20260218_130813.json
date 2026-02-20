@@ -1,0 +1,10 @@
+{
+  "session_id": "20260218_130813",
+  "timestamp": "2026-02-18T21:08:13Z",
+  "memory_bank": ".claude/memory/",
+  "git_commit": "not a git repo",
+  "working_directory": "/home/jorgill/cny2026-greeting",
+  "files_modified": "",
+  "files_created": "",
+  "notes": "Pre-compact snapshot for context restoration (Memory Bank v3.0)"
+}

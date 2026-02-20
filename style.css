@@ -1,0 +1,249 @@
+/* ============================================
+   CNY 2026 — Interactive Visual Art Gallery
+   ============================================ */
+
+:root {
+  --crimson: #DC143C;
+  --gold: #FFD700;
+  --lantern-red: #CC0000;
+  --ivory: #FFFFF0;
+  --ink-black: #1a1a1a;
+  --jade: #00A86B;
+  --warm-glow: #FF6B35;
+  --paper-red: #C41E3A;
+  --ui-chrome: rgba(255, 255, 255, 0.4);
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0a0a;
+  font-family: 'Noto Serif SC', serif;
+  color: var(--ivory);
+}
+
+/* ---- Scroll Container ---- */
+
+.scroll-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Card Sections ---- */
+
+.card-section {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-section canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Info Icon ---- */
+
+.info-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--ui-chrome);
+  cursor: pointer;
+  z-index: 20;
+  border-radius: 50%;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.info-icon:hover {
+  color: var(--gold);
+}
+
+.info-icon:hover::after {
+  content: attr(data-description);
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 280px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--ivory);
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  font-family: 'Noto Serif SC', serif;
+  pointer-events: none;
+  white-space: normal;
+}
+
+/* ---- Card Title Overlay ---- */
+
+.card-title {
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  font-size: 14px;
+  font-family: 'Source Code Pro', monospace;
+  color: var(--ui-chrome);
+  z-index: 30;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  letter-spacing: 0.5px;
+}
+
+.card-title.hidden {
+  opacity: 0;
+}
+
+/* ---- Dot Navigation ---- */
+
+.dot-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 30;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ui-chrome);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.dot:hover {
+  border-color: var(--gold);
+  transform: scale(1.3);
+}
+
+.dot.active {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ---- Intro Overlay ---- */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: pointer;
+  transition: opacity 0.8s ease;
+}
+
+.intro-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-content {
+  text-align: center;
+}
+
+.intro-title {
+  font-size: clamp(48px, 8vw, 96px);
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+}
+
+.intro-subtitle {
+  font-size: clamp(18px, 3vw, 32px);
+  color: var(--gold);
+  font-weight: 400;
+  margin-bottom: 8px;
+  opacity: 0.85;
+}
+
+.intro-year {
+  font-size: clamp(14px, 2vw, 22px);
+  color: var(--gold);
+  font-weight: 400;
+  margin-bottom: 32px;
+  opacity: 0.65;
+}
+
+.intro-hint {
+  font-size: 14px;
+  font-family: 'Source Code Pro', monospace;
+  color: var(--gold);
+  opacity: 0.4;
+  letter-spacing: 2px;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 1280px) {
+  .info-icon:hover::after {
+    width: 220px;
+    font-size: 12px;
+  }
+
+  .card-title {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dot-nav {
+    gap: 8px;
+    bottom: 16px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .info-icon {
+    top: 12px;
+    right: 12px;
+  }
+
+  .card-title {
+    top: 12px;
+    left: 16px;
+    font-size: 11px;
+  }
+}
